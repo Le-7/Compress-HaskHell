@@ -16,7 +16,7 @@ Vous pouvez choisir la méthode de compression souhaitée à partir d'un menu in
 
 ## Installation
 
-1. Assurez-vous d'avoir Haskell installé sur votre système.
+1. Assurez-vous d'avoir Haskell installé sur votre système.7
 2. Clonez ce dépôt :
     ```
     git clone https://github.com/votre-utilisateur/compress.git
@@ -44,5 +44,4 @@ Les tests unitaires sont inclus dans le fichier `Spec.hs`. Pour les exécuter, u
 
 ```
 stack test
-
 ```
