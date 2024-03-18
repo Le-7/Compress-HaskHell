@@ -28,6 +28,7 @@ Vous pouvez choisir la méthode de compression souhaitée à partir d'un menu in
 4. Utilisez Stack pour installer les dépendances et exécuter le programme :
     ```
     stack upgrade (pour être sûr d'avoir la derniere version)
+    stack init
     stack build
     stack run compress-exe
     ```
