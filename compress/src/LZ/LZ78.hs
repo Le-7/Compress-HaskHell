@@ -1,55 +1,45 @@
-{-# LANGUAGE TupleSections #-}
-
 module LZ.LZ78 (compress, uncompress) where
 
-import LZ.Dictionaries (empty, ascii, zeroAsChar)
-import Data.List (elemIndex, isPrefixOf)
-import Data.Maybe (fromMaybe)
+import LZ.Dictionaries (empty)
+import Data.Maybe (fromJust, fromMaybe)
+import Data.List (elemIndex, isPrefixOf,find, genericIndex)
 
-type Dictionary = [String]
-
--- | Compress a string using LZ78
+-- | Compress a string using LZ78 algorithm
 compress :: String -> [(Int, Char)]
-compress = compress' empty
-
--- Helper function for compression
-compress' :: Dictionary -> String -> [(Int, Char)]
-compress' _ [] = []
-compress' dict str =
-  case findLongestPrefix dict str of
-    (prefix, rest) ->
-      if null rest
-        then [(fromMaybe 0 (elemIndex prefix dict), zeroAsChar)]
-        else (fromMaybe 0 (elemIndex prefix dict), head rest) : compress' (dict ++ [prefix ++ [head rest]]) rest
-
-
-
--- Find the longest prefix of the dictionary that matches the beginning of the string
-findLongestPrefix :: Dictionary -> String -> (String, String)
-findLongestPrefix dict str = go dict "" str
+compress input = compress' input empty
   where
-    go _ prefix [] = (prefix, "")
-    go [] prefix rest = (prefix, rest)
-    go (entry:entries) prefix rest =
-      if entry `isPrefixOf` rest
-        then go entries entry (drop (length entry) rest)
-        else go entries prefix rest
+    compress' :: String -> [String] -> [(Int, Char)]
+    compress' [] _ = []
+    compress' (c:cs) dict =
+      case elemIndex prefix dict of
+        Just index -> (index, nextChar) : compress' rest (dict ++ [prefix ++ [nextChar]])
+        Nothing    -> (0, c) : compress' cs (dict ++ [[c]])
+      where
+        (prefix, nextChar, rest) = findLongestPrefixAndNextChar (c:cs) dict
 
--- | Uncompress a list of LZ78-encoded tuples
+    findLongestPrefixAndNextChar :: String -> [String] -> (String, Char, String)
+    findLongestPrefixAndNextChar str dict = findLongestPrefixAndNextChar' str "" dict
+      where
+        findLongestPrefixAndNextChar' :: String -> String -> [String] -> (String, Char, String)
+        findLongestPrefixAndNextChar' [] _ _ = error "Input string cannot be empty"
+        findLongestPrefixAndNextChar' (x:xs) acc [] = (acc, x, xs)
+        findLongestPrefixAndNextChar' (x:xs) acc (d:ds)
+          | d `isPrefixOf` (acc ++ [x]) = findLongestPrefixAndNextChar' xs (acc ++ [x]) ds
+          | otherwise                   = (acc, x, xs)
+
+
+-- Decompress a list of (index, character) pairs into a string
 uncompress :: [(Int, Char)] -> Maybe String
-uncompress = fmap concat . uncompress' empty
+uncompress tokens = fmap concat . mapM expandToken $ tokens
+  where
+    expandToken :: (Int, Char) -> Maybe String
+    expandToken (0, c) = Just [c]
+    expandToken (idx, c) = do
+      prev <- sequenceA $ replicate idx (getPrev tokens)
+      return (prev ++ [c])
 
--- Helper function for decompression
-uncompress' :: Dictionary -> [(Int, Char)] -> Maybe [String]
-uncompress' _ [] = Just []
-uncompress' dict ((index, char):rest) = do
-  prefix <- dict `atIndex` index
-  suffix <- uncompress' (dict ++ [prefix ++ [char]]) rest
-  return (prefix : suffix)
-
--- Get the element at a specific index in a list
-atIndex :: [a] -> Int -> Maybe a
-atIndex [] _ = Nothing
-atIndex (x:xs) i
-  | i == 0    = Just x
-  | otherwise = xs `atIndex` (i - 1)
+    getPrev :: [(Int, Char)] -> Maybe Char
+    getPrev [] = Nothing
+    getPrev ((i, c):rest)
+      | i == length rest + 1 = Just c
+      | otherwise = getPrev rest
