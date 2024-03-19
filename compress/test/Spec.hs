@@ -4,6 +4,9 @@ import LZ.LZ78
 import LZ.LZW
 import Statistic.Huffman
 import Statistic.ShannonFano
+import Statistic.EncodingTree (EncodingTree(EncodingNode, EncodingLeaf))
+
+
 
 -- Test cases for RLE compression and decompression
 rleTests :: Test

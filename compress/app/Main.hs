@@ -6,6 +6,7 @@ import qualified LZ.LZ78 as LZ78
 import qualified LZ.LZW as LZW
 import qualified Statistic.Huffman as Huffman
 import qualified Statistic.ShannonFano as ShannonFano
+import qualified Statistic.EncodingTree as EncodingTree
 
 -- Menu options
 data MenuOption = RLE | LZ78 | LZW | Huffman | ShannonFano | Exit deriving (Read, Show, Eq)
@@ -54,9 +55,13 @@ handleHuffman :: IO ()
 handleHuffman = do
     putStrLn "Enter the input string for Huffman:"
     input <- getLine
-    case Huffman.tree input of
-        Just encodingTree -> putStrLn $ "Encoding Tree: " ++ show encodingTree
-        Nothing           -> putStrLn "Error in Huffman compression."
+    let (encodingTree, compressedBits) = EncodingTree.compress  Huffman.tree input
+    putStrLn $ "Input String: " ++ input
+    putStrLn $ "Encoding Tree: " ++ show encodingTree
+    putStrLn $ "Compressed Bits: " ++ show compressedBits
+    case EncodingTree.uncompress (encodingTree, compressedBits) of
+        Just decompressedString -> putStrLn $ "Decompressed String: " ++ decompressedString
+        Nothing -> putStrLn "Decompression failed."
     mainMenu
 
 -- Handle Shannon-Fano compression
@@ -64,10 +69,15 @@ handleShannonFano :: IO ()
 handleShannonFano = do
     putStrLn "Enter the input string for Shannon-Fano:"
     input <- getLine
-    case ShannonFano.tree input of
-        Just encodingTree -> putStrLn $ "Encoding Tree: " ++ show encodingTree
-        Nothing           -> putStrLn "Error in Shannon-Fano compression."
+    let (encodingTree, compressedBits) = EncodingTree.compress ShannonFano.tree input
+    putStrLn $ "Input String: " ++ input
+    putStrLn $ "Encoding Tree: " ++ show encodingTree
+    putStrLn $ "Compressed Bits: " ++ show compressedBits
+    case EncodingTree.uncompress (encodingTree, compressedBits) of
+        Just decompressedString -> putStrLn $ "Decompressed String: " ++ decompressedString
+        Nothing -> putStrLn "Decompression failed."
     mainMenu
+
 
 main :: IO ()
 main = mainMenu
