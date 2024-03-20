@@ -56,3 +56,12 @@ tests:
     dependencies:
     - compress
     - HUnit
+
+benchmarks:
+  benchmark-name:
+    main: benchmark.hs
+    source-dirs: benchmark
+    dependencies:
+    - compress
+    - time
+    - timeit

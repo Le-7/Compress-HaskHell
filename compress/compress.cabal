@@ -66,3 +66,19 @@ test-suite compress-test
     , compress
     , containers
   default-language: Haskell2010
+
+benchmark benchmark-name
+  type: exitcode-stdio-1.0
+  main-is: benchmark.hs
+  other-modules:
+      Paths_compress
+  hs-source-dirs:
+      benchmark
+  ghc-options: -Wall -Wcompat -Widentities -Wincomplete-record-updates -Wincomplete-uni-patterns -Wmissing-export-lists -Wmissing-home-modules -Wpartial-fields -Wredundant-constraints
+  build-depends:
+      base >=4.7 && <5
+    , compress
+    , containers
+    , time
+    , timeit
+  default-language: Haskell2010

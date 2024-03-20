@@ -45,7 +45,7 @@ shannonFanoTests :: Test
 shannonFanoTests = TestList
     [ "Shannon-Fano Tree Generation" ~: Statistic.ShannonFano.tree "abbca" ~?= Just (EncodingNode 5 (EncodingLeaf 2 'a') (EncodingNode 3 (EncodingLeaf 2 'b') (EncodingLeaf 1 'c') ))
     ]
--- Test vérifié en accord avec la consigne 
+-- Test vérifié en accord avec la consigne
 
 
 main :: IO ()
