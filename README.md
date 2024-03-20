@@ -47,3 +47,10 @@ Les tests unitaires sont inclus dans le fichier `Spec.hs`. Pour les exécuter, u
 ```
 stack test
 ```
+## Benchmarks
+
+Les Benchmarks sont inclus dans le fichier `benchmark.hs`. Pour les exécuter, utilisez la commande suivante :
+
+```
+stack bench
+```
