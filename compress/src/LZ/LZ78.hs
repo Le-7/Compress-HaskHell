@@ -16,6 +16,12 @@ compress' dict str = compress2helper dict str []
 
 compress2helper :: Dictionary -> String -> String -> [(Int, Char)]
 compress2helper _ [] _ = []
+
+compress2helper dict (x:[]) prefix =
+  case elemIndex (prefix ++ [x]) dict of
+    Just idx -> [(fromMaybe 0 (elemIndex prefix dict), x)]
+    Nothing  -> [(fromMaybe 0 (elemIndex prefix dict), x)]
+
 compress2helper dict (x:xs) prefix =
   case elemIndex (prefix ++ [x]) dict of
     Just idx -> compress2helper dict xs (prefix ++ [x])
