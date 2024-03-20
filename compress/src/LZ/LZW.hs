@@ -1,6 +1,5 @@
 module LZ.LZW (compress, uncompress) where
 
--- Import necessary modules
 import Data.List (find)
 
 -- Define the initial dictionary for LZW
@@ -14,24 +13,33 @@ compress = compress' initialDictionary ""
 -- Helper function for compression
 compress' :: [(String, Int)] -> String -> String -> [Int]
 compress' _ _ [] = []
+-- End of input string, output the code for the currentString and stop
 compress' dict currentString [x] = case find (\(s, _) -> s == currentString ++ [x]) dict of
     Just entry -> [snd entry]
     Nothing -> case find (\(s, _) -> s == currentString) dict of
-        Just (_, code) -> code : [snd (head dict)]
-        Nothing -> error "Dictionary entry not found during compression"
+        Just (_, code) -> [code]
+        Nothing -> error ("Dictionary entry not found during compression: " ++ show currentString ++ " ++ [" ++ show x ++ "]")
+-- Process the string
 compress' dict currentString (x:xs) = case find (\(s, _) -> s == currentString ++ [x]) dict of
     Just entry -> compress' dict (currentString ++ [x]) xs
     Nothing -> case find (\(s, _) -> s == currentString) dict of
         Just (_, code) -> code : compress' ((currentString ++ [x], length dict) : dict) [x] xs
-        Nothing -> error "Dictionary entry not found during compression"
+        Nothing -> error ("Dictionary entry not found during compression: " ++ show currentString ++ " ++ [" ++ show x ++ "]")
+
 
 -- Function to uncompress a list of integers using LZW
 uncompress :: [Int] -> Maybe String
-uncompress = uncompress' initialDictionary ""
+uncompress compressed = Just (uncompress' compressed initialDictionary)
 
--- Helper function for uncompression
-uncompress' :: [(String, Int)] -> String -> [Int] -> Maybe String
-uncompress' _ currentString [] = Just currentString
-uncompress' dict currentString (code:codes) = case find (\(_, c) -> c == code) dict of
-    Just (entry, _) -> uncompress' ((currentString ++ [head entry], length dict) : dict) (currentString ++ entry) codes
-    Nothing -> Nothing  -- Invalid code, dictionary entry not found during uncompression
+-- Helper function for decompression
+uncompress' :: [Int] -> [(String, Int)] -> String
+uncompress' [] _ = ""
+uncompress' [x] dict = case find (\(_, code) -> code == x) dict of
+    Just (entry, _) -> entry
+    Nothing -> error ("Dictionary entry not found during decompression: " ++ show x)
+uncompress' (x:y:xs) dict = case find (\(_, code) -> code == x) dict of
+    Just (entry, _) -> entry ++ case find (\(_, code) -> code == y) dict of
+        Just (nextEntry, _) -> uncompress' (y:xs) ((entry ++ nextEntry, length dict) : dict)
+        Nothing -> error ("Dictionary entry not found during decompression: " ++ show y)
+    Nothing -> error ("Dictionary entry not found during decompression: " ++ show x)
+
