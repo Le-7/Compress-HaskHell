@@ -6,7 +6,7 @@ import Data.Maybe (fromMaybe)
 
 type Dictionary = [String]
 
--- | Compress a string using LZ78
+-- | Compress a string using LZ78.
 compress :: String -> [(Int, Char)]
 compress = compress' empty
 
