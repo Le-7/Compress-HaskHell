@@ -14,6 +14,11 @@ compress = compress' initialDictionary ""
 -- Helper function for compression
 compress' :: [(String, Int)] -> String -> String -> [Int]
 compress' _ _ [] = []
+compress' dict currentString [x] = case find (\(s, _) -> s == currentString ++ [x]) dict of
+    Just entry -> [snd entry]
+    Nothing -> case find (\(s, _) -> s == currentString) dict of
+        Just (_, code) -> code : [snd (head dict)]
+        Nothing -> error "Dictionary entry not found during compression"
 compress' dict currentString (x:xs) = case find (\(s, _) -> s == currentString ++ [x]) dict of
     Just entry -> compress' dict (currentString ++ [x]) xs
     Nothing -> case find (\(s, _) -> s == currentString) dict of
