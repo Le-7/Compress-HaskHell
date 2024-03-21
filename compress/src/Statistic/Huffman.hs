@@ -20,12 +20,15 @@ buildLeafNodes xs = map (\(symbol, freq) -> EncodingLeaf freq symbol) $ frequenc
     where
         frequencyCount = map (\x -> (head x, length x)) . group . sort
 
--- | Build Huffman tree from leaf nodes
 buildHuffmanTree :: Ord a => [EncodingTree a] -> EncodingTree a
 buildHuffmanTree [node] = node
-buildHuffmanTree nodes = buildHuffmanTree $ insertInternalNode nodes
+buildHuffmanTree nodes = buildHuffmanTree $ insertInternalNode $ sortByFrequency nodes
 
--- | Insert internal node into the list of nodes
+-- | Trie les nœuds par fréquence croissante
+sortByFrequency :: Ord a => [EncodingTree a] -> [EncodingTree a]
+sortByFrequency = sortOn count
+
+-- | Insère un nœud interne dans la liste des nœuds
 insertInternalNode :: Ord a => [EncodingTree a] -> [EncodingTree a]
-insertInternalNode (n1:n2:rest) = sortOn count $ EncodingNode (count n1 + count n2) n1 n2 : rest
-insertInternalNode nodes = nodes
+insertInternalNode (n1:n2:rest) = sortByFrequency $ EncodingNode (count n1 + count n2) n1 n2 : rest
+insertInternalNode nodes = nodes 
