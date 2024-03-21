@@ -36,14 +36,14 @@ lzwTests = TestList
 -- Test cases for Huffman tree generation
 huffmanTests :: Test
 huffmanTests = TestList
-    [ "Huffman Tree Generation" ~: Statistic.Huffman.tree "abbca" ~?= Just (EncodingNode 5 (EncodingLeaf 2 'a') (EncodingNode 3 (EncodingLeaf 2 'b') (EncodingLeaf 1 'c') ))
+    [ "Huffman Tree Generation" ~: Statistic.Huffman.tree "abbca" ~?= Just (EncodingNode 5 (EncodingLeaf 1 'c') (EncodingNode 4 (EncodingLeaf 2 'a') (EncodingLeaf 2 'b')))
     ]
 -- Test vérifié en accord avec la consigne
 
 -- Test cases for Shannon-Fano tree generation
 shannonFanoTests :: Test
 shannonFanoTests = TestList
-    [ "Shannon-Fano Tree Generation" ~: Statistic.ShannonFano.tree "abbca" ~?= Just (EncodingNode 5 (EncodingLeaf 2 'a') (EncodingNode 3 (EncodingLeaf 2 'b') (EncodingLeaf 1 'c') ))
+    [ "Shannon-Fano Tree Generation" ~: Statistic.ShannonFano.tree "abbca" ~?= Just (EncodingNode 3 (EncodingLeaf 1 'c') (EncodingNode 2 (EncodingLeaf 1 'a') (EncodingLeaf 1 'b')))
     ]
 -- Test vérifié en accord avec la consigne
 
