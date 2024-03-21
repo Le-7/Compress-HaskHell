@@ -1,6 +1,7 @@
 module LZ.LZW (compress, uncompress) where
 
 import Data.List (find)
+import Data.Char(ord)
 
 -- Define the initial dictionary for LZW
 initialDictionary :: [(String, Int)]
@@ -17,7 +18,7 @@ compress' _ _ [] = []
 compress' dict currentString [x] = case find (\(s, _) -> s == currentString ++ [x]) dict of
     Just entry -> [snd entry]
     Nothing -> case find (\(s, _) -> s == currentString) dict of
-        Just (_, code) -> [code]
+        Just (_, code) -> [code] ++ [ord x]
         Nothing -> error ("Dictionary entry not found during compression: " ++ show currentString ++ " ++ [" ++ show x ++ "]")
 -- Process the string
 compress' dict currentString (x:xs) = case find (\(s, _) -> s == currentString ++ [x]) dict of
