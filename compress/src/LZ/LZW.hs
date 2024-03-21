@@ -26,8 +26,7 @@ compress' dict currentString (x:xs) = case find (\(s, _) -> s == currentString +
     Nothing -> case find (\(s, _) -> s == currentString) dict of
         Just (_, code) -> code : compress' ((currentString ++ [x], length dict) : dict) [x] xs
         Nothing -> error ("Dictionary entry not found during compression: " ++ show currentString ++ " ++ [" ++ show x ++ "]")
-
-
+        
 -- Function to uncompress a list of integers using LZW
 uncompress :: [Int] -> Maybe String
 uncompress compressed = Just (uncompress' compressed initialDictionary)
@@ -39,8 +38,17 @@ uncompress' [x] dict = case find (\(_, code) -> code == x) dict of
     Just (entry, _) -> entry
     Nothing -> error ("Dictionary entry not found during decompression: " ++ show x)
 uncompress' (x:y:xs) dict = case find (\(_, code) -> code == x) dict of
-    Just (entry, _) -> entry ++ case find (\(_, code) -> code == y) dict of
-        Just (nextEntry, _) -> uncompress' (y:xs) ((entry ++ nextEntry, length dict) : dict)
-        Nothing -> error ("Dictionary entry not found during decompression: " ++ show y)
+    Just (entry, _) ->
+        case find (\(_, code) -> code == y) dict of
+            Just (nextEntry, _) ->
+                entry ++ uncompress' (y:xs) (updateDictionary (entry ++ [head nextEntry]) dict)
+            Nothing ->
+                let newEntry = entry ++ [head entry] -- Create a new entry by appending the first character of the current entry
+                in entry ++ uncompress' (y:xs) ((newEntry, length dict) : dict)
     Nothing -> error ("Dictionary entry not found during decompression: " ++ show x)
+
+
+-- Update dictionary with new entry
+updateDictionary :: String -> [(String, Int)] -> [(String, Int)]
+updateDictionary newEntry dict = (newEntry, length dict) : dict
 
