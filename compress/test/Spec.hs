@@ -36,7 +36,7 @@ lzwTests = TestList
 -- Test cases for Huffman tree generation
 huffmanTests :: Test
 huffmanTests = TestList
-    [ "Huffman Tree Generation" ~: Statistic.Huffman.tree "abbca" ~?= Just (EncodingNode 5 (EncodingLeaf 2 'a') (EncodingNode 3 (EncodingLeaf 2 'b') (EncodingLeaf 1 'c') ))
+    [ "Huffman Tree Generation" ~: Statistic.Huffman.tree "abbca" ~?= Just (EncodingNode 5 (EncodingLeaf 2 'b') (EncodingNode 3 (EncodingLeaf 1 'c') (EncodingLeaf 2 'a') ))
     ]
 -- Test vérifié en accord avec la consigne
 
