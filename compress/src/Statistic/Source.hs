@@ -10,11 +10,7 @@ occurrences symbols = Map.fromListWith (+) $ zip symbols (repeat 1)
 
 -- | SHANNON entropy of source
 entropy :: Ord a => [a] -> Double
-entropy symbols =
-  let counts = Map.elems $ occurrences symbols
-      total = sum counts
-      probabilities = map (\count -> fromIntegral count / fromIntegral total) counts
-  in negate $ sum $ map (\p -> p * logBase 2 p) probabilities
+entropy symbols = negate $ sum $ map (\p -> p * logBase 2 p) (map (\count -> fromIntegral count / fromIntegral (sum (Map.elems $ occurrences symbols))) (Map.elems $ occurrences symbols))
 
 -- | List of occurrences ordered by count
 orderedCounts :: Ord a => [a] -> [(a, Int)]
