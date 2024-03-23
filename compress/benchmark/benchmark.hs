@@ -51,8 +51,7 @@ benchmark = do
 timeCompressionAndDecompression :: (Show a) => (String -> a) -> (a -> Maybe String) -> String -> IO Double
 timeCompressionAndDecompression compressFunc uncompressFunc method = do
     startTime <- getCurrentTime
-    let compressed = compressFunc inputString
-    case uncompressFunc compressed of
+    case uncompressFunc (compressFunc inputString) of
         Just _ -> return ()
         Nothing -> putStrLn $ "Error in " ++ method ++ " decompression."
     endTime <- getCurrentTime
@@ -64,11 +63,9 @@ timeCompressionAndDecompression compressFunc uncompressFunc method = do
 huffmanCompressionAndDecompression :: (String -> Maybe (EncodingTree.EncodingTree Char)) -> String -> IO Double
 huffmanCompressionAndDecompression treeConstructor method = do
     startTime <- getCurrentTime
-    let maybeTree = treeConstructor inputString
-    case maybeTree of
+    case (treeConstructor inputString) of
         Just huffmanTree -> do
-            let (encodingTree, compressedBits) = EncodingTree.compress Huffman.tree inputString
-            case EncodingTree.uncompress (encodingTree, compressedBits) of
+            case EncodingTree.uncompress (EncodingTree.compress Huffman.tree inputString) of
                 Just _ -> return ()
                 Nothing -> putStrLn $ "Error in " ++ method ++ " decompression."
         Nothing -> putStrLn $ "Error in " ++ method ++ " tree construction."
@@ -79,11 +76,9 @@ huffmanCompressionAndDecompression treeConstructor method = do
 shannonCompressionAndDecompression :: (String -> Maybe (EncodingTree.EncodingTree Char)) -> String -> IO Double
 shannonCompressionAndDecompression treeConstructor method = do
     startTime <- getCurrentTime
-    let maybeTree = treeConstructor inputString
-    case maybeTree of
+    case (treeConstructor inputString) of
         Just shannonTree -> do
-            let (encodingTree, compressedBits) = EncodingTree.compress ShannonFano.tree inputString
-            case EncodingTree.uncompress (encodingTree, compressedBits) of
+            case EncodingTree.uncompress (EncodingTree.compress ShannonFano.tree inputString) of
                 Just _ -> return ()
                 Nothing -> putStrLn $ "Error in " ++ method ++ " decompression."
         Nothing -> putStrLn $ "Error in " ++ method ++ " tree construction."

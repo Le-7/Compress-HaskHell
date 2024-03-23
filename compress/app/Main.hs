@@ -24,60 +24,54 @@ mainMenu = do
     putStr "Enter your choice: "
     hFlush stdout
     choice <- getLine
-    handleChoice choice
-
--- Handle user choice
-handleChoice :: String -> IO ()
-handleChoice "1" = handleCompression RLE.compress RLE.uncompress "RLE"
-handleChoice "2" = handleCompression LZ78.compress LZ78.uncompress "LZ78"
-handleChoice "3" = handleCompression LZW.compress LZW.uncompress "LZW"
-handleChoice "4" = handleHuffman
-handleChoice "5" = handleShannonFano
-handleChoice "6" = putStrLn "Exiting program."
-handleChoice _   = putStrLn "Invalid choice. Please enter a valid option." >> mainMenu
+    (\c -> case c of
+        "1" -> handleCompression RLE.compress RLE.uncompress "RLE"
+        "2" -> handleCompression LZ78.compress LZ78.uncompress "LZ78"
+        "3" -> handleCompression LZW.compress LZW.uncompress "LZW"
+        "4" -> handleHuffman
+        "5" -> handleShannonFano
+        "6" -> putStrLn "Exiting program."
+        _   -> putStrLn "Invalid choice. Please enter a valid option." >> mainMenu) choice
 
 -- General compression function
 handleCompression :: (Show a, Eq a) => (String -> a) -> (a -> Maybe String) -> String -> IO ()
 handleCompression compressFunc uncompressFunc method = do
     putStrLn $ "Enter the input string for " ++ method ++ ":"
     input <- getLine
-    let compressed = compressFunc input
-    case uncompressFunc compressed of
+    case uncompressFunc (compressFunc input) of
         Just uncompressed -> do
-            putStrLn $ "Compressed: " ++ show compressed
+            putStrLn $ "Compressed: " ++ show (compressFunc input)
             putStrLn $ "Uncompressed: " ++ show uncompressed
             mainMenu
         Nothing -> putStrLn $ "Error in " ++ method ++ " compression."
-
 
 -- Handle Huffman compression
 handleHuffman :: IO ()
 handleHuffman = do
     putStrLn "Enter the input string for Huffman:"
     input <- getLine
-    let (encodingTree, compressedBits) = EncodingTree.compress  Huffman.tree input
-    putStrLn $ "Input String: " ++ input
-    putStrLn $ "Encoding Tree: " ++ show encodingTree
-    putStrLn $ "Compressed Bits: " ++ show compressedBits
-    case EncodingTree.uncompress (encodingTree, compressedBits) of
-        Just decompressedString -> putStrLn $ "Decompressed String: " ++ decompressedString
-        Nothing -> putStrLn "Decompression failed."
-    mainMenu
+    (\(et, cb) -> do
+        putStrLn $ "Input String: " ++ input
+        putStrLn $ "Encoding Tree: " ++ show et
+        putStrLn $ "Compressed Bits: " ++ show cb
+        case EncodingTree.uncompress (et, cb) of
+            Just decompressedString -> putStrLn $ "Decompressed String: " ++ decompressedString
+            Nothing -> putStrLn "Decompression failed."
+        mainMenu) (EncodingTree.compress Huffman.tree input)
 
 -- Handle Shannon-Fano compression
 handleShannonFano :: IO ()
 handleShannonFano = do
     putStrLn "Enter the input string for Shannon-Fano:"
     input <- getLine
-    let (encodingTree, compressedBits) = EncodingTree.compress ShannonFano.tree input
-    putStrLn $ "Input String: " ++ input
-    putStrLn $ "Encoding Tree: " ++ show encodingTree
-    putStrLn $ "Compressed Bits: " ++ show compressedBits
-    case EncodingTree.uncompress (encodingTree, compressedBits) of
-        Just decompressedString -> putStrLn $ "Decompressed String: " ++ decompressedString
-        Nothing -> putStrLn "Decompression failed."
-    mainMenu
-
+    (\(et, cb) -> do
+        putStrLn $ "Input String: " ++ input
+        putStrLn $ "Encoding Tree: " ++ show et
+        putStrLn $ "Compressed Bits: " ++ show cb
+        case EncodingTree.uncompress (et, cb) of
+            Just decompressedString -> putStrLn $ "Decompressed String: " ++ decompressedString
+            Nothing -> putStrLn "Decompression failed."
+        mainMenu) (EncodingTree.compress ShannonFano.tree input)
 
 main :: IO ()
 main = mainMenu

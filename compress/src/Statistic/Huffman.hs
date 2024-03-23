@@ -13,9 +13,7 @@ tree xs
 
 -- | Build leaf nodes from input list
 buildLeafNodes :: Ord a => [a] -> [EncodingTree a]
-buildLeafNodes = map (\(symbol, freq) -> EncodingLeaf freq symbol) . frequencyCount
-  where
-    frequencyCount = map (\x -> (head x, length x)) . group . sort
+buildLeafNodes = map (\(symbol, freq) -> EncodingLeaf freq symbol) . (map (\x -> (head x, length x)) . group . sort)
 
 -- | Build Huffman tree from leaf nodes
 buildHuffmanTree :: Ord a => [EncodingTree a] -> EncodingTree a
