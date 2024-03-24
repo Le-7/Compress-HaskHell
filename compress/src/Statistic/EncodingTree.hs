@@ -1,7 +1,7 @@
 {- |
   Module : Statistic.EncodingTree
   Description : A module representing a binary tree for binary encoding
-  Maintainer : Romain Dujol
+  Maintainer : Romain DUJOL
 -}
 module Statistic.EncodingTree(EncodingTree(..), isLeaf, count, has, encode, decodeOnce, decode, meanLength, compress, uncompress) where
 
