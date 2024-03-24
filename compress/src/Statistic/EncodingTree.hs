@@ -57,12 +57,21 @@ decode tree bits = decode' tree bits []
         Nothing                      -> Nothing
 
 -- | Mean length of the binary encoding
+-- pour abbca : 2/5 * 1 + 2/5*2 +1/5*1 en gros somme (count/racine * etage)
 meanLength :: EncodingTree a -> Double
-meanLength t = fromIntegral (count t) / fromIntegral (countSymbols t)
+meanLength t = fromIntegral (totalDepth t) / fromIntegral (countSymbols t)
   where
   countSymbols :: EncodingTree a -> Int
   countSymbols (EncodingLeaf cnt _)   = cnt
   countSymbols (EncodingNode _ l r)   = countSymbols l + countSymbols r
+  
+  totalDepth :: EncodingTree a -> Int
+  totalDepth t = sumDepths t 0
+    where
+    sumDepths :: EncodingTree a -> Int -> Int
+    sumDepths (EncodingLeaf cnt _) depth = cnt * depth
+    sumDepths (EncodingNode _ l r) depth = sumDepths l (depth + 1) + sumDepths r (depth + 1)
+
 
 -- | Compress method using a function generating encoding tree and also returns generated encoding tree
 compress :: Eq a => ([a] -> Maybe (EncodingTree a)) -> [a] -> (Maybe (EncodingTree a), [Bit])

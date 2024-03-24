@@ -5,6 +5,7 @@ import qualified RLE
 import qualified LZ.LZ78 as LZ78
 import qualified LZ.LZW as LZW
 import qualified Statistic.Huffman as Huffman
+import qualified Statistic.Source as Source
 import qualified Statistic.ShannonFano as ShannonFano
 import qualified Statistic.EncodingTree as EncodingTree
 
@@ -52,11 +53,14 @@ handleHuffman = do
     input <- getLine
     (\(et, cb) -> do
         putStrLn $ "Input String: " ++ input
-        putStrLn $ "Encoding Tree: " ++ show et
+        putStrLn $ "Entropy of input String: " ++ show (Source.entropy input)
         putStrLn $ "Compressed Bits: " ++ show cb
         case EncodingTree.uncompress (et, cb) of
             Just decompressedString -> putStrLn $ "Decompressed String: " ++ decompressedString
             Nothing -> putStrLn "Decompression failed."
+        putStrLn $ case et of
+            Just et -> "Mean length = " ++ show (EncodingTree.meanLength et) ++ " for tree :" ++ show et
+            Nothing   -> "Encoding Tree is Nothing"
         mainMenu) (EncodingTree.compress Huffman.tree input)
 
 -- Handle Shannon-Fano compression
@@ -66,11 +70,15 @@ handleShannonFano = do
     input <- getLine
     (\(et, cb) -> do
         putStrLn $ "Input String: " ++ input
-        putStrLn $ "Encoding Tree: " ++ show et
+        putStrLn $ "Entropy of input String: " ++ show (Source.entropy input)
         putStrLn $ "Compressed Bits: " ++ show cb
         case EncodingTree.uncompress (et, cb) of
             Just decompressedString -> putStrLn $ "Decompressed String: " ++ decompressedString
             Nothing -> putStrLn "Decompression failed."
+        putStrLn $ case et of
+             Just et -> "Mean length = " ++ show (EncodingTree.meanLength et) ++ " for tree :" ++ show et
+             Nothing   -> "Encoding Tree is Nothing"
+
         mainMenu) (EncodingTree.compress ShannonFano.tree input)
 
 main :: IO ()
