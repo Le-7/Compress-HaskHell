@@ -65,9 +65,7 @@ huffmanCompressionAndDecompression treeConstructor method = do
     startTime <- getCurrentTime
     case (treeConstructor inputString) of
         Just huffmanTree -> do
-            let compressedHuffman = EncodingTree.compress Huffman.tree inputString
-            let compressionRatioHuffman = (fromIntegral (length inputString) / fromIntegral (length compressedHuffman)) * 100
-            case EncodingTree.uncompress compressedHuffman of
+            case EncodingTree.uncompress (EncodingTree.compress Huffman.tree inputString) of
                 Just _ -> return ()
                 Nothing -> putStrLn $ "Error in " ++ method ++ " decompression."
         Nothing -> putStrLn $ "Error in " ++ method ++ " tree construction."
@@ -79,9 +77,7 @@ shannonCompressionAndDecompression treeConstructor method = do
     startTime <- getCurrentTime
     case (treeConstructor inputString) of
         Just shannonTree -> do
-            let compressedShannonFano = EncodingTree.compress ShannonFano.tree inputString
-            let compressionRatioShannonFano = (fromIntegral (length inputString) / fromIntegral (length compressedShannonFano)) * 100
-            case EncodingTree.uncompress compressedShannonFano of
+            case EncodingTree.uncompress (EncodingTree.compress ShannonFano.tree inputString) of
                 Just _ -> return ()
                 Nothing -> putStrLn $ "Error in " ++ method ++ " decompression."
         Nothing -> putStrLn $ "Error in " ++ method ++ " tree construction."
