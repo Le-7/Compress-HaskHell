@@ -39,14 +39,14 @@ benchmark = do
     -- Benchmark Huffman
     putStrLn "Benchmarking Huffman..."
     timeHuffman <- huffmanCompressionAndDecompression (Huffman.tree :: String -> Maybe (EncodingTree.EncodingTree Char)) "Huffman"
-    putStrLn $ "Huffman Compression/Decompression Time: " ++ show timeHuffman ++ "s, Compression Ratio: " ++ show ((fromIntegral (length (EncodingTree.compress Huffman.tree inputString)) / fromIntegral (length inputString)) * 100) ++ "%"
-    putStrLn $ "Original Size: " ++ show (length inputString) ++ " bytes, Compressed Size: " ++ show (length (EncodingTree.compress Huffman.tree inputString)) ++ " bytes"
+    putStrLn $ "Huffman Compression/Decompression Time: " ++ show timeHuffman ++ "s" --, Compression Ratio: " ++ show ((fromIntegral (length (EncodingTree.compress Huffman.tree inputString)) / fromIntegral (length inputString)) * 100) ++ "%"
+    --putStrLn $ "Original Size: " ++ show (length inputString) ++ " bytes, Compressed Size: " ++ show (length (EncodingTree.compress Huffman.tree inputString)) ++ " bytes"
 
     -- Benchmark Shannon-Fano
     putStrLn "Benchmarking Shannon-Fano..."
     timeShannonFano <- shannonCompressionAndDecompression (ShannonFano.tree :: String -> Maybe (EncodingTree.EncodingTree Char)) "Shannon-Fano"
-    putStrLn $ "Shannon-Fano Compression/Decompression Time: " ++ show timeShannonFano ++ "s, Compression Ratio: " ++ show ((fromIntegral (length (EncodingTree.compress ShannonFano.tree inputString)) / fromIntegral (length inputString)) * 100) ++ "%"
-    putStrLn $ "Original Size: " ++ show (length inputString) ++ " bytes, Compressed Size: " ++ show (length (EncodingTree.compress ShannonFano.tree inputString)) ++ " bytes"
+    putStrLn $ "Shannon-Fano Compression/Decompression Time: " ++ show timeShannonFano ++ "s"--, Compression Ratio: " ++ show ((fromIntegral (length (EncodingTree.compress ShannonFano.tree inputString)) / fromIntegral (length inputString)) * 100) ++ "%"
+    --putStrLn $ "Original Size: " ++ show (length inputString) ++ " bytes, Compressed Size: " ++ show (length (EncodingTree.compress ShannonFano.tree inputString)) ++ " bytes"
 
     putStrLn ""
     putStrLn "Benchmarking completed."
