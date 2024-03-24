@@ -1,7 +1,7 @@
 -- |
 -- Module      : RLE
 -- Description : An implementation of the run-length encoding method
--- Maintainer  : AÏT CHADI Anissa, COSTA Mathéo, TRAN Alexandre
+-- Maintainer  : Mathéo, Alexandre, Anissa
 --
 module RLE (compress, uncompress) where
 
